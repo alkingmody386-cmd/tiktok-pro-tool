@@ -15,25 +15,25 @@ class TikTokOSINT:
 
         # Extracting data from the __UNIVERSAL_DATA_FOR_REHYDRATION__ script tag
         try:
-            pattern = r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">(.*?)</script>'
+            pattern = r\'"user":(\{.*?\}),"stats":(\{.*?\})\'
             match = re.search(pattern, response.text)
             if match:
-                data = json.loads(match.group(1))
-                user_data = data.get("__DEFAULT_SCOPE__", {}).get("webapp.user-detail", {}).get("userInfo", {})
-                if user_data:
-                    return {
-                        "id": user_data.get("user", {}).get("id"),
-                        "uniqueId": user_data.get("user", {}).get("uniqueId"),
-                        "nickname": user_data.get("user", {}).get("nickname"),
-                        "avatar": user_data.get("user", {}).get("avatarLarger"),
-                        "signature": user_data.get("user", {}).get("signature"),
-                        "verified": user_data.get("user", {}).get("verified"),
-                        "followerCount": user_data.get("stats", {}).get("followerCount"),
-                        "followingCount": user_data.get("stats", {}).get("followingCount"),
-                        "heartCount": user_data.get("stats", {}).get("heartCount"),
-                        "videoCount": user_data.get("stats", {}).get("videoCount"),
-                        "diggCount": user_data.get("stats", {}).get("diggCount"),
-                    }
+                user_data = json.loads(match.group(1))
+                stats_data = json.loads(match.group(2))
+                
+                return {
+                    "id": user_data.get("id"),
+                    "uniqueId": user_data.get("uniqueId"),
+                    "nickname": user_data.get("nickname"),
+                    "avatar": user_data.get("avatarLarger"),
+                    "signature": user_data.get("signature"),
+                    "verified": user_data.get("verified"),
+                    "followerCount": stats_data.get("followerCount"),
+                    "followingCount": stats_data.get("followingCount"),
+                    "heartCount": stats_data.get("heartCount"),
+                    "videoCount": stats_data.get("videoCount"),
+                    "diggCount": stats_data.get("diggCount"),
+                }
             return {"error": "Could not find user data in page source."}
         except Exception as e:
             return {"error": f"Error parsing user data: {str(e)}"}
