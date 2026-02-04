@@ -15,7 +15,8 @@ class TikTokOSINT:
 
         # Extracting data from the __UNIVERSAL_DATA_FOR_REHYDRATION__ script tag
         try:
-            pattern = r\'"user":(\{.*?\}),"stats":(\{.*?\})\'
+            # Fixed the syntax error by removing incorrect backslashes
+            pattern = r'"user":(\{.*?\}),"stats":(\{.*?\})'
             match = re.search(pattern, response.text)
             if match:
                 user_data = json.loads(match.group(1))
